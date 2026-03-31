@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Experiencia VR Interactiva 360</title>
+    <meta name="description" content="WebVR con A-Frame">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+      .info-panel {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        font-family: sans-serif;
+        z-index: 100;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="info-panel">
+      <h2>Modo VR Activado</h2>
+      <p>PC: Usa el mouse para mirar y WASD para moverte.</p>
+      <p>VR: Mira el punto rojo sobre las esferas para activarlas.</p>
+    </div>
+
+    <a-scene>
+      
+      <a-assets>
+        <img id="panorama" src="https://pannellum.org/images/bunker.jpg" crossorigin="anonymous">
+      </a-assets>
+
+      <a-entity camera look-controls wasd-controls position="0 1.6 0">
+        <a-entity cursor="fuse: true; fuseTimeout: 1500"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: red; shader: flat"
+                  animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+                  animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 1500; from: 1 1 1; to: 0.1 0.1 0.1"
+                  animation__mouseleave="property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 500; to: 1 1 1">
+        </a-entity>
+      </a-entity>
+
+      <a-sky src="#panorama" rotation="0 -90 0"></a-sky>
+
+      <a-entity position="-4 2 -5">
+        <a-sphere color="#ef4444" radius="0.3" 
+                  animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true">
+        </a-sphere>
+        <a-text value="Panel de Control" align="center" position="0 0.6 0" scale="1.5 1.5 1.5"></a-text>
+      </a-entity>
+
+      <a-entity position="5 1 2" rotation="0 -45 0">
+        <a-sphere color="#2563eb" radius="0.3" 
+                  event-set__enter="_event: mouseenter; color: #60a5fa"
+                  event-set__leave="_event: mouseleave; color: #2563eb">
+        </a-sphere>
+        <a-text value="Zona de Almacenaje" align="center" position="0 0.6 0" scale="1.5 1.5 1.5"></a-text>
+      </a-entity>
+
+      <a-light type="ambient" color="#fff"></a-light>
+    </a-scene>
+
+    <script>
+      // Lógica sencilla para detectar interacción con los hotspots
+      const hotspots = document.querySelectorAll('a-sphere');
+      hotspots.forEach(hotspot => {
+        hotspot.addEventListener('click', function () {
+          alert('Has interactuado con: ' + this.nextElementSibling.getAttribute('value'));
+        });
+      });
+    </script>
+  </body>
+</html>
